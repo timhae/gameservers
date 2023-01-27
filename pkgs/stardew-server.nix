@@ -1,11 +1,22 @@
-{ fetchzip
-, steam-run
+{ alsa-lib
+, autoPatchelfHook
+, dotnet-runtime_5
+, fetchzip
+, fontconfig
+, icu
+, lib
+, libGL
+, libkrb5
+, lttng-ust_2_12
+, makeWrapper
+, openssl_1_1
 , requireFile
-, runtimeShell
-, stdenvNoCC
+, stdenv
 , unzip
+, xorg
+, zlib
 }:
-stdenvNoCC.mkDerivation rec {
+stdenv.mkDerivation rec {
   pname = "stardew-server";
   version = "20220118";
   smapi-version = "3.18.1";
@@ -25,10 +36,20 @@ stdenvNoCC.mkDerivation rec {
     url = "https://github.com/Pathoschild/SMAPI/releases/download/${smapi-version}/SMAPI-${smapi-version}-installer.zip";
     sha256 = "sha256-kuPCDKXdD5HL7+7OQgqxSM35At2o901CVGnhaxYLqZ0=";
   };
+  dontConfigure = true;
+  dontBuild = true;
+  nativeBuildInputs = [ autoPatchelfHook makeWrapper ];
+  buildInputs = [
+    fontconfig
+    libkrb5
+    lttng-ust_2_12
+    stdenv.cc.cc
+    zlib
+  ];
   unpackPhase = ''
     mkdir -p unzip
     ${unzip}/bin/unzip ${src}
-    cp -r Stardew\ Valley/* unzip/
+    mv Stardew\ Valley/* unzip/
     rm -rf Stardew\ Valley/
     ${unzip}/bin/unzip -o ${src-smapi}/internal/linux/install.dat -d unzip
   '';
@@ -38,10 +59,14 @@ stdenvNoCC.mkDerivation rec {
     cp $out/files/Stardew\ Valley.deps.json $out/files/StardewModdingAPI.deps.json
     mv $out/files/StardewValley $out/files/StardewValley-original
     mv $out/files/StardewModdingAPI $out/files/StardewValley
-    cat > $out/bin/stardew-server <<EOF
-    #!${runtimeShell}
-    exec ${steam-run}/bin/steam-run $out/files/StardewValley
-    EOF
-    chmod +x $out/bin/stardew-server
+    makeWrapper "${dotnet-runtime_5}/bin/dotnet" $out/bin/stardew-server \
+      --add-flags "$out/files/Stardew\ Valley.dll" \
+      --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [
+        alsa-lib
+        icu
+        libGL
+        openssl_1_1
+        xorg.libXi
+      ]}"
   '';
 }
