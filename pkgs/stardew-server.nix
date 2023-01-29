@@ -1,6 +1,5 @@
 { alsa-lib
 , autoPatchelfHook
-, dotnet-runtime_5
 , fetchzip
 , fontconfig
 , icu
@@ -47,20 +46,22 @@ stdenv.mkDerivation rec {
     zlib
   ];
   unpackPhase = ''
+    runHook preUnpack
     mkdir -p unzip
     ${unzip}/bin/unzip ${src}
     mv Stardew\ Valley/* unzip/
     rm -rf Stardew\ Valley/
     ${unzip}/bin/unzip -o ${src-smapi}/internal/linux/install.dat -d unzip
+    runHook postUnpack
   '';
   installPhase = ''
+    runHook preInstall
     mkdir -p $out/bin $out/files
     cp -r unzip/* $out/files
     cp $out/files/Stardew\ Valley.deps.json $out/files/StardewModdingAPI.deps.json
     mv $out/files/StardewValley $out/files/StardewValley-original
     mv $out/files/StardewModdingAPI $out/files/StardewValley
-    makeWrapper "${dotnet-runtime_5}/bin/dotnet" $out/bin/stardew-server \
-      --add-flags "$out/files/Stardew\ Valley.dll" \
+    makeWrapper $out/files/StardewValley $out/bin/stardew-server \
       --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [
         alsa-lib
         icu
@@ -68,5 +69,6 @@ stdenv.mkDerivation rec {
         openssl_1_1
         xorg.libXi
       ]}"
+    runHook postInstall
   '';
 }
