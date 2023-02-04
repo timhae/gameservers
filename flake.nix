@@ -10,6 +10,7 @@
     {
       packages.x86_64-linux = {
         stardew-server = callPackage ./pkgs/stardew-server.nix { };
+        test-mod = callPackage ./pkgs/test-mod.nix { };
       };
       nixosModules = {
         stardew-server = import ./module/stardew-server.nix;
