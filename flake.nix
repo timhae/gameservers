@@ -13,7 +13,7 @@
         test-mod = callPackage ./pkgs/test-mod.nix { };
       };
       nixosModules = {
-        stardew-server = import ./module/stardew-server.nix;
+        stardew-server = import ./modules/stardew-server.nix;
       };
     };
 }
