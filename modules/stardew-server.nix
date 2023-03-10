@@ -124,21 +124,24 @@ with lib; {
         ];
         example = literalExpression ''
           [
-            pname = "RemoteControl";
-            version = "1.0.1";
-            url = "https://github.com/atravita-mods/stardew-remote-control";
-            src = fetchurl {
-              url = "https://haering.dev/stardew-valley-mods/''${pname}-''${version}.zip";
-              sha256 = "sha256-1J6RDFloaF5OluBQSWsTpnvGNQITYekfJac8EXkrzGo=";
-            };
-            modConfig = {
-              everyoneIsAdmin = false;
-            };
+            {
+              pname = "RemoteControl";
+              version = "1.0.1";
+              url = "https://github.com/atravita-mods/stardew-remote-control";
+              src = fetchurl {
+                url = "https://haering.dev/stardew-valley-mods/''${pname}-''${version}.zip";
+                sha256 = "sha256-1J6RDFloaF5OluBQSWsTpnvGNQITYekfJac8EXkrzGo=";
+              };
+              modConfig = {
+                everyoneIsAdmin = false;
+              };
+            }
           ]'';
         description = ''
           List of mods that will be included. Each zipfile only contains the mod
           files without a root directory of the name of the mod. Configuration
-          of the mod can be adapted by providing a 'modConfig' attrset.
+          of the mod can be adapted by providing a 'modConfig' attrset which
+          will be translated to a config.json file in the folder of the mod.
         '';
       };
     };

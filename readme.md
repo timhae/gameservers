@@ -1,6 +1,6 @@
 # Usage
 
-Add as flake input to use the module:
+Add as flake input to use the modules:
 
 ```nix
 {
@@ -18,9 +18,9 @@ Add as flake input to use the module:
 }
 ```
 
-# Game Servers
+## Game Servers
 
-## Stardew Valley
+### Stardew Valley
 
 Basic setup:
 
