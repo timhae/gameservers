@@ -155,6 +155,7 @@ with lib; {
       after = [ "network-online.target" ];
       serviceConfig = {
         ExecStart = ''
+# TODO: set the binary path in the wrapper script somehow.
           exec ${pkgs.xvfb-run}/bin/xvfb-run \
             --auto-servernum \
             --server-args='-screen 0 320x180x8' \

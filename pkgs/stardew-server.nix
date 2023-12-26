@@ -13,12 +13,11 @@
 , lttng-ust_2_12
 , makeWrapper
 , openssl_1_1
-, requireFile # TODO: would be nicer than hosting the gamefiles on my server
+, requireFile
 , stdenv
 , unzip
 , xorg
 , zlib
-, stateDir ? "/var/lib/stardew-server"
 , saveName ? "Tim_239568989"
   # configure SMAPI options, see src/SMAPI/SMAPI.config.json in the SMAPI repo
   # for possible values
@@ -55,7 +54,7 @@
       url = "https://forums.stardewvalley.net/threads/unofficial-mod-updates.2096/page-47#post-29677";
       src = fetchurl {
         url = "https://haering.dev/stardew-valley-mods/${pname}-${version}.zip";
-        sha256 = "sha256-a8QzyyjntFGJ2OWrGA7pAcX0mId7nEDu6v62sGw30Ww=";
+        sha256 = "sha256-TZLm0WgAWa/jUMDVt5H7i/9cyDPXNGmCw0UBZr6d26c=";
       };
     }
     rec {
@@ -147,32 +146,26 @@ let
     };
   modDrvs = map (mod: callPackage (mkMod mod) { }) modList;
   modDrvsPaths = map (modDrv: modDrv.outPath + "/" + modDrv.pname) modDrvs;
-  setupScript = ''
-    # GAMEFILES
-    if [[ ! -e "${stateDir}" ]]; then
-      echo "please make sure that '${stateDir}' exists before you run this program"
-      exit 1
-    fi
-    cp -nr --no-preserve=all -t "${stateDir}/" "$store_path/."
-    # MODS
-    for modDrvPath in ${toString modDrvsPaths}; do
-      cp -nr --no-preserve=all -t "${stateDir}/Mods/" $modDrvPath
-    done
-    # SMAPI CONF
-    confOld=$(${gnused}/bin/sed -e '1,16d' -e '/.*\*.*/d' < "$store_path/smapi-internal/config.json")
-    confNew='${builtins.toJSON smapiConfig}'
-    ${jq}/bin/jq -s '.[0] * .[1]' <<< "$confOld $confNew" > "${stateDir}/smapi-internal/config.json"
-    chmod +x "${stateDir}/StardewValley"
-  '';
 in
 stdenv.mkDerivation rec {
   pname = "stardew-server";
   # get version from here https://steamdb.info/app/413150/depots/?branch=public
   # or from steam (right click Stardew Valley, properties -> updates)
   version = "8043676";
-  src = fetchurl {
-    url = "https://haering.dev/stardew-valley-mods/${pname}-${version}.zip";
-    sha256 = "sha256-5e7NesAH+F6eTjiyI4Zd+aiaLr14CEVTeJLs4Dzjz+g=";
+  src = requireFile {
+    name = "StardewValley";
+    url = "https://store.steampowered.com/app/413150/Stardew_Valley/";
+    sha256 = "1w2ylpp2zkzabllhkh088zalir7w88gdxsf5ajjaajszb31qqars";
+    hashMode = "recursive";
+    message = ''
+      cd ~/.local/share/Steam/steamapps/common
+      mv Stardew\ Valley StardewValley
+      nix-store --add-fixed --recursive sha256 ./StardewValley
+        /nix/store/rs510jnv420lx0fgn503chsxrwn9c1v5-StardewValley
+      mv StardewValley Stardew\ Valley
+      echo $(nix-store -q --hash /nix/store/rs510jnv420lx0fgn503chsxrwn9c1v5-StardewValley)
+        sha256:1w2ylpp2zkzabllhkh088zalir7w88gdxsf5ajjaajszb31qqars
+    '';
   };
   smapi-version = "3.18.2";
   src-smapi = fetchzip {
@@ -193,7 +186,7 @@ stdenv.mkDerivation rec {
   unpackPhase = ''
     runHook preUnpack
     mkdir -p $out/bin
-    ${unzip}/bin/unzip ${src} -d $out
+    cp -r ${src}/* $out/
     ${unzip}/bin/unzip -o ${src-smapi}/internal/linux/install.dat -d $out
     runHook postUnpack
   '';
@@ -203,10 +196,16 @@ stdenv.mkDerivation rec {
     cp $out/Stardew\ Valley.deps.json $out/StardewModdingAPI.deps.json
     mv $out/StardewValley $out/StardewValley-original
     mv $out/StardewModdingAPI $out/StardewValley
+    # MODS
+    for modDrvPath in ${toString modDrvsPaths}; do
+      cp -nr --no-preserve=all -t "$out/Mods/" $modDrvPath
+    done
+    # SMAPI CONF
+    confOld=$(${gnused}/bin/sed -e '1,16d' -e '/.*\*.*/d' < "$out/smapi-internal/config.json")
+    confNew='${builtins.toJSON smapiConfig}'
+    ${jq}/bin/jq -s '.[0] * .[1]' <<< "$confOld $confNew" > "$out/smapi-internal/config.json"
     # EXE
     makeWrapper $out/StardewValley $out/bin/stardew-server \
-      --set store_path $out \
-      --run ${lib.escapeShellArg setupScript} \
       --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [
         alsa-lib
         icu
@@ -214,7 +213,6 @@ stdenv.mkDerivation rec {
         openssl_1_1
         xorg.libXi
       ]}"
-    ${gnused}/bin/sed -i "s:\"$out/StardewValley\":'${stateDir}/StardewValley':" $out/bin/stardew-server
     runHook postInstall
   '';
 }
