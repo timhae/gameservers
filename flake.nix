@@ -1,5 +1,5 @@
 {
-  description = "Gameservers for various games";
+  description = "Gameservers and modules";
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
   };
@@ -23,6 +23,10 @@
       nixosModules = {
         stardew-server = import ./modules/stardew-server.nix;
         terraria-server = import ./modules/terraria-server.nix;
+        valheim-server = import ./modules/valheim-server.nix;
+      };
+      homeManagerModules = {
+        valheim-mods = import ./modules/valheim-mods.nix;
       };
       checks = forAllSystems (system:
         self.packages.${system} // import ./checks/terraria-server.nix { inherit self nixpkgs system; }
