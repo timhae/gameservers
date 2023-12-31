@@ -16,6 +16,7 @@
         terraria-server = final.callPackage ./pkgs/terraria-server.nix { };
         tmod-server = final.callPackage ./pkgs/tmod-server.nix { };
         test-mod = final.callPackage ./pkgs/test-mod.nix { };
+        mage-server = final.callPackage ./pkgs/mage-server.nix { };
       };
       packages = forAllSystems (system: {
         inherit (nixpkgsFor.${system}) stardew-server terraria-server test-mod;
@@ -24,6 +25,7 @@
         stardew-server = import ./modules/stardew-server.nix;
         terraria-server = import ./modules/terraria-server.nix;
         valheim-server = import ./modules/valheim-server.nix;
+        mage-server = import ./modules/mage-server.nix;
       };
       homeManagerModules = {
         valheim-mods = import ./modules/valheim-mods.nix;
