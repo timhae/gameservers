@@ -94,7 +94,7 @@ in
                   mkdir -p $out
                   ${unzip}/bin/unzip $src
                   mv -v ${pname}/* $out/
-                  for modDerivationPath in ${toString map (modDrv: modDrv.outPath) modDerivations}; do
+                  for modDerivationPath in ${toString (map (modDrv: modDrv.outPath) modDerivations)}; do
                     cd $modDerivationPath
                     dllName="$(${fd}/bin/fd -t f 'dll')"
                     configName="$(${fd}/bin/fd -t f 'dll')"
