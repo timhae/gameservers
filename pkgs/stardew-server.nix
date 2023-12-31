@@ -12,7 +12,7 @@
 , libkrb5
 , lttng-ust_2_12
 , makeWrapper
-, openssl_1_1
+# , openssl_1_1
 , requireFile
 , stdenv
 , unzip
@@ -210,7 +210,7 @@ stdenv.mkDerivation rec {
         alsa-lib
         icu
         libGL
-        openssl_1_1
+        # openssl_1_1
         xorg.libXi
       ]}"
     runHook postInstall
