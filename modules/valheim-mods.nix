@@ -5,7 +5,7 @@ let
 in
 {
   options.services.valheim-mods = {
-    enable = lib.mkEnableOption "enable valheim mods";
+    enable = lib.mkEnableOption "enable valheim mods, set startup command to `./start_game_bepinex.sh; echo %command%`"; # see https://www.reddit.com/r/SteamDeck/comments/zgoazi/valheim_mods_on_the_deck/
     installDir = lib.mkOption {
       type = lib.types.str;
       default = null;
