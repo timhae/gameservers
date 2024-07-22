@@ -99,7 +99,8 @@ in
                     dllName="$(${fd}/bin/fd -t f 'dll')"
                     configName="$(${fd}/bin/fd -t f 'cfg')"
                     ln -sfv $PWD/$dllName $out/BepInEx/plugins/$dllName
-                    ln -sfv $PWD/$configName $out/BepInEx/config/$configName
+                    cp -fv $PWD/$configName $out/BepInEx/config/$configName
+                    chmod 777 $out/BepInEx/config/$configName
                   done
                 '';
               })
