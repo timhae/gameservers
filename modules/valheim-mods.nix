@@ -74,6 +74,7 @@ in
                   configName="$(${ilspycmd}/bin/ilspycmd $dllName | ${ripgrep}/bin/rg '\[BepInPlugin\("([^"]+)".*' -r '$1' ).cfg"
                   ${if config == {} then "" else "cat ${format.generate "${pname}-config" config} > $out/$configName"}
                   mv -v $dllName $out/
+                  mv -v $configName $out/
                 '';
               };
             modDerivations = map (mod: pkgs.callPackage (mkMod mod) { }) cfg.mods;
