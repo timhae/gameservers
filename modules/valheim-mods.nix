@@ -97,7 +97,7 @@ in
                   for modDerivationPath in ${toString (map (modDrv: modDrv.outPath) modDerivations)}; do
                     cd $modDerivationPath
                     dllName="$(${fd}/bin/fd -t f 'dll')"
-                    configName="$(${fd}/bin/fd -t f 'dll')"
+                    configName="$(${fd}/bin/fd -t f 'cfg')"
                     ln -sfv $PWD/$dllName $out/BepInEx/plugins/$dllName
                     ln -sfv $PWD/$configName $out/BepInEx/config/$configName
                   done
