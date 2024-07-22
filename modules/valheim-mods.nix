@@ -21,7 +21,7 @@ in
           pname = "MassFarming";
           version = "1.9.0";
           src = pkgs.fetchurl {
-            url = "https://valheim.thunderstore.io/package/download/k942/${pname}/${version}/";
+            url = "https://thunderstore.io/package/download/k942/${pname}/${version}/";
             hash = "sha256:05cha1flc6kyky49spcrd6xwgmfr11cn7w7vws9df56m085nghvz";
           };
         }
@@ -29,7 +29,7 @@ in
           pname = "MultiCraft";
           version = "1.3.0";
           src = pkgs.fetchurl {
-            url = "https://valheim.thunderstore.io/package/download/MaxiMods/${pname}/${version}/";
+            url = "https://thunderstore.io/package/download/MaxiMods/${pname}/${version}/";
             hash = "sha256:0fnw0d5vipqh42dg6d5r7z6mxxsf1mxcv6xvilihpn4nqnmxpy2f";
           };
           config = {
@@ -40,7 +40,7 @@ in
           pname = "UseEquipmentInWater";
           version = "0.2.4";
           src = pkgs.fetchurl {
-            url = "https://valheim.thunderstore.io/package/download/LVH-IT/${pname}/${version}/";
+            url = "https://thunderstore.io/package/download/LVH-IT/${pname}/${version}/";
             hash = "sha256:0hhb7mf3gh3mi46p5dgr48fykgq8a8k6czqad5hb0yyv4glr51r2";
           };
           config = { };
@@ -82,7 +82,7 @@ in
                 pname = "BepInExPack_Valheim";
                 version = "5.4.2202";
                 src = pkgs.fetchurl {
-                  url = "https://valheim.thunderstore.io/package/download/denikson/${pname}/${version}/";
+                  url = "https://thunderstore.io/package/download/denikson/${pname}/${version}/";
                   sha256 = "sha256-2cOxaZKqagIGmpIaPk1hMkD+KRKCu2f+kiYbAMb6v4w=";
                 };
                 dontPatch = true;
