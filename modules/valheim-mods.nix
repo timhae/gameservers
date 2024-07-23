@@ -36,15 +36,6 @@ in
             MultiCraft.CapMaximumCrafts = true;
           };
         }
-        rec {
-          pname = "UseEquipmentInWater";
-          version = "0.2.4";
-          src = pkgs.fetchurl {
-            url = "https://thunderstore.io/package/download/LVH-IT/${pname}/${version}/";
-            hash = "sha256:0hhb7mf3gh3mi46p5dgr48fykgq8a8k6czqad5hb0yyv4glr51r2";
-          };
-          config = { };
-        }
       ];
     };
   };
@@ -69,10 +60,10 @@ in
                 dontFixup = true;
                 unpackPhase = ''
                   mkdir -p $out
-                  ${unzip}/bin/unzip $src
-                  dllName="$(${fd}/bin/fd -t f 'dll')"
-                  configName="$(${ilspycmd}/bin/ilspycmd $dllName | ${ripgrep}/bin/rg '\[BepInPlugin\("([^"]+)".*' -r '$1' ).cfg"
-                  ${if config == {} then "" else "cat ${format.generate "${pname}-config" config} > $out/$configName"}
+                  ${unzip}/bin/unzip -jq $src || true # ignore backslash warning
+                  dllName="$(${fd}/bin/fd -t f '\.dll$')"
+                  configName="$(${ilspycmd}/bin/ilspycmd $dllName | ${ripgrep}/bin/rg '.*\[BepInPlugin\("([^"]+)".*' -r '$1' ).cfg"
+                  cat ${format.generate "${pname}-config" config} > "$out/$configName"
                   mv -v $dllName $out/
                 '';
               };
@@ -97,8 +88,8 @@ in
                   for modDerivationPath in ${toString (map (modDrv: modDrv.outPath) modDerivations)}; do
                     cd $modDerivationPath
                     dllName="$(${fd}/bin/fd -t f 'dll')"
-                    configName="$(${fd}/bin/fd -t f 'cfg')"
                     ln -sfv $PWD/$dllName $out/BepInEx/plugins/$dllName
+                    configName="$(${fd}/bin/fd -t f 'cfg')"
                     cp -fv $PWD/$configName $out/BepInEx/config/$configName
                     chmod 777 $out/BepInEx/config/$configName
                   done

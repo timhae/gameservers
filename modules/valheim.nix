@@ -68,7 +68,7 @@ in
         "-world"
         "Dedicated"
         "-password"
-        "hallopascal"
+        "supersecret"
         "-public"
         "0" # Valheim now supports favourite servers in-game which I am using instead of listing in the public registry.
         "-modifier"
