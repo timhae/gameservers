@@ -16,9 +16,18 @@ Add as flake input to use the modules:
 }
 ```
 
-## Game Servers
+All checks have to be ran outside of the sandbox since `steamcmd` requires
+internet access to download the game servers. Run them like this:
 
-### Stardew Valley
+```nix
+nix build --option sandbox false -L .#checks.x86_64-linux.<gameserver>
+```
+
+Checks take a long time to complete and download a lot.
+
+# Game Servers
+
+## Stardew Valley
 
 Basic setup:
 
@@ -29,12 +38,33 @@ services.stardew-server = {
 };
 ```
 
-That's it. After a rebuild you can join the game via the IP of your server. `modules/stardew-server.nix` defines all available settings.
+That's it. After a rebuild you can join the game via the IP of your server.
+`./modules/stardew-server.nix` defines all available settings.
 
-### Satisfactory
+## Valheim
+
+Basic setup:
+
+```nix
+services.valheim = {
+  enable = true;
+  openFirewall = true;
+  passwordFile = "/etc/valheimPassword";
+  modifiers = {
+    deathpenalty = "casual";
+    portals = "casual";
+  };
+};
+environment.etc."valheimPassword".text = "PASSWORD=supersecret";
+```
+
+The systemd unit is not started automatically since the service puts some load
+on the host machine and thus enabling with `systemctl start valheim` should be
+an active choice. `./modules/valheim-server.nix` defines all available settings.
+
+## Satisfactory
 
 
-### Valheim
 
 # TODO
 

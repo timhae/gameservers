@@ -9,6 +9,22 @@
         "aarch64-linux"
       ];
       forEachPkgs = f: forEachSystem (system: f nixpkgs.legacyPackages.${system});
+      nixos-lib = import "${nixpkgs}/nixos/lib" { };
+      mkTest =
+        {
+          name,
+          testScript,
+          nodes,
+          pkgs,
+          ...
+        }:
+        nixos-lib.runTest {
+          inherit name testScript nodes;
+          hostPkgs = pkgs;
+          passthru = {
+            ci = false;
+          };
+        };
     in
     {
       overlays.default = final: _: {
@@ -23,11 +39,14 @@
         mage-server = import ./modules/mage-server.nix;
         stardew-server = import ./modules/stardew-server.nix;
         terraria-server = import ./modules/terraria-server.nix;
-        valheim-server = import ./modules/valheim.nix;
+        valheim-server = import ./modules/valheim-server.nix;
       };
       homeManagerModules = {
         valheim-mods = import ./modules/valheim-mods.nix;
       };
       formatter = forEachPkgs (pkgs: pkgs.nixfmt-rfc-style);
+      checks = forEachPkgs (pkgs: {
+        valheim-server = mkTest ((import ./checks/valheim-server.nix { inherit self; }) // pkgs);
+      });
     };
 }
