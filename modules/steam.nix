@@ -27,11 +27,8 @@
             inputs = with pkgs; [
               patchelf
               steamcmd
-              coreutils
             ];
-            execer = with pkgs; [
-              "cannot:${steamcmd}/bin/steamcmd"
-            ];
+            execer = with pkgs; [ "cannot:${steamcmd}/bin/steamcmd" ];
           }
           ''
             set -eux
@@ -69,7 +66,6 @@
               # Update the interpreter to the path on NixOS.
               patchelf --set-interpreter ${pkgs.glibc}/lib/ld-linux-x86-64.so.2 $f || true
             done
-            chmod -R 777 /var/lib/steam-app-$instance
           ''
       } %i";
       PrivateTmp = true;
