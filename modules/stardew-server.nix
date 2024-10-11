@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.services.stardew-server;
   varLibStateDir = "/var/lib/${cfg.stateDir}";
@@ -10,7 +15,8 @@ let
     modList = cfg.modList;
   };
 in
-with lib; {
+with lib;
+{
   options = {
     services.stardew-server = {
       enable = mkEnableOption "enable stardew-server";
@@ -155,11 +161,11 @@ with lib; {
       after = [ "network-online.target" ];
       serviceConfig = {
         ExecStart = ''
-# TODO: set the binary path in the wrapper script somehow.
-          exec ${pkgs.xvfb-run}/bin/xvfb-run \
-            --auto-servernum \
-            --server-args='-screen 0 320x180x8' \
-            ${package}/bin/stardew-server
+          # TODO: set the binary path in the wrapper script somehow.
+                    exec ${pkgs.xvfb-run}/bin/xvfb-run \
+                      --auto-servernum \
+                      --server-args='-screen 0 320x180x8' \
+                      ${package}/bin/stardew-server
         '';
         WorkingDirectory = varLibStateDir;
         Restart = "no";

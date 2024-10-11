@@ -1,4 +1,10 @@
-{ config, pkgs, lib, ... }: {
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+{
   users.users.steam = {
     isSystemUser = true;
     group = "steam";
@@ -14,54 +20,58 @@
     };
     serviceConfig = {
       Type = "oneshot";
-      ExecStart = "${pkgs.resholve.writeScript "steam" {
-        interpreter = "${pkgs.zsh}/bin/zsh";
-        inputs = with pkgs; [
-          patchelf
-          steamcmd
-          coreutils
-        ];
-        execer = with pkgs; [
-          "cannot:${steamcmd}/bin/steamcmd"
-        ];
-      } ''
-        set -eux
+      ExecStart = "${
+        pkgs.resholve.writeScript "steam"
+          {
+            interpreter = "${pkgs.zsh}/bin/zsh";
+            inputs = with pkgs; [
+              patchelf
+              steamcmd
+              coreutils
+            ];
+            execer = with pkgs; [
+              "cannot:${steamcmd}/bin/steamcmd"
+            ];
+          }
+          ''
+            set -eux
 
-        instance=''${1:?Instance Missing}
-        eval 'args=(''${(@s:_:)instance})'
-        app=''${args[1]:?App ID missing}
-        beta=''${args[2]:-}
-        betapass=''${args[3]:-}
+            instance=''${1:?Instance Missing}
+            eval 'args=(''${(@s:_:)instance})'
+            app=''${args[1]:?App ID missing}
+            beta=''${args[2]:-}
+            betapass=''${args[3]:-}
 
-        dir=/var/lib/steam-app-$instance
+            dir=/var/lib/steam-app-$instance
 
-        cmds=(
-          +force_install_dir $dir
-          +login anonymous
-          +app_update $app validate
-        )
+            cmds=(
+              +force_install_dir $dir
+              +login anonymous
+              +app_update $app validate
+            )
 
-        if [[ $beta ]]; then
-          cmds+=(-beta $beta)
-          if [[ $betapass ]]; then
-            cmds+=(-betapassword $betapass)
-          fi
-        fi
+            if [[ $beta ]]; then
+              cmds+=(-beta $beta)
+              if [[ $betapass ]]; then
+                cmds+=(-betapassword $betapass)
+              fi
+            fi
 
-        cmds+=(+quit)
+            cmds+=(+quit)
 
-        steamcmd $cmds
+            steamcmd $cmds
 
-        for f in $dir/*; do
-          if ! [[ -f $f && -x $f ]]; then
-            continue
-          fi
+            for f in $dir/*; do
+              if ! [[ -f $f && -x $f ]]; then
+                continue
+              fi
 
-          # Update the interpreter to the path on NixOS.
-          patchelf --set-interpreter ${pkgs.glibc}/lib/ld-linux-x86-64.so.2 $f || true
-        done
-        chmod -R 777 /var/lib/steam-app-$instance
-      ''} %i";
+              # Update the interpreter to the path on NixOS.
+              patchelf --set-interpreter ${pkgs.glibc}/lib/ld-linux-x86-64.so.2 $f || true
+            done
+            chmod -R 777 /var/lib/steam-app-$instance
+          ''
+      } %i";
       PrivateTmp = true;
       Restart = "on-failure";
       StateDirectory = "steam-app-%i";

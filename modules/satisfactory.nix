@@ -1,9 +1,16 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
-let cfg = config.services.satisfactory-server;
+let
+  cfg = config.services.satisfactory-server;
 
-in {
+in
+{
   options.services.satisfactory-server = {
     enable = mkEnableOption "Satisfactory Dedicated Server";
 
@@ -51,8 +58,7 @@ in {
 
         serviceConfig = {
           TimeoutSec = "15min";
-          ExecStart =
-            "${steam-run} ${cfg.dataDir}/FactoryServer.sh ${cfg.launchOptions}";
+          ExecStart = "${steam-run} ${cfg.dataDir}/FactoryServer.sh ${cfg.launchOptions}";
           Restart = "always";
           User = "satisfactory";
           WorkingDirectory = cfg.dataDir;
@@ -72,7 +78,12 @@ in {
     };
     users.groups.satisfactory = { };
 
-    networking.firewall =
-      mkIf cfg.openFirewall { allowedUDPPorts = [ 15777 7777 15000 ]; };
+    networking.firewall = mkIf cfg.openFirewall {
+      allowedUDPPorts = [
+        15777
+        7777
+        15000
+      ];
+    };
   };
 }

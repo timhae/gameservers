@@ -1,5 +1,13 @@
-{ config, lib, pkgs, inputs, outputs, ... }: {
-# TODO: move into gameservers/improve (dynamic user, systemd credentials)
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  outputs,
+  ...
+}:
+{
+  # TODO: move into gameservers/improve (dynamic user, systemd credentials)
   services.terraria = {
     password = outputs.gitcrypt.gaming.password;
     enable = true;

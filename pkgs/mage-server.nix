@@ -1,9 +1,10 @@
-{ stdenv
-, fetchzip
-, jdk11
-, maven
-, protobuf
-, inShell ? false
+{
+  stdenv,
+  fetchzip,
+  jdk11,
+  maven,
+  protobuf,
+  inShell ? false,
 }:
 stdenv.mkDerivation rec {
   version = "20231231";
@@ -17,7 +18,15 @@ stdenv.mkDerivation rec {
         sha256 = "sha256-st1iNrYmHsxvnYw5O/+VjLoJv/JcErih0ydQJTHWwJI=";
       };
   pname = "mage-server";
-  buildInputs = if inShell then [ jdk11 maven protobuf ] else [ ];
+  buildInputs =
+    if inShell then
+      [
+        jdk11
+        maven
+        protobuf
+      ]
+    else
+      [ ];
   installPhase = ''
     mkdir -p $out/bin $out/extension $out/plugins
     cp -rv ./* $out

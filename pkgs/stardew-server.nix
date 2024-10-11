@@ -1,34 +1,35 @@
-{ alsa-lib
-, autoPatchelfHook
-, callPackage
-, fetchurl
-, fetchzip
-, fontconfig
-, gnused
-, icu
-, jq
-, lib
-, libGL
-, libkrb5
-, lttng-ust_2_12
-, makeWrapper
-# , openssl_1_1
-, requireFile
-, stdenv
-, unzip
-, xorg
-, zlib
-, saveName ? "Tim_239568989"
+{
+  alsa-lib,
+  autoPatchelfHook,
+  callPackage,
+  fetchurl,
+  fetchzip,
+  fontconfig,
+  gnused,
+  icu,
+  jq,
+  lib,
+  libGL,
+  libkrb5,
+  lttng-ust_2_12,
+  makeWrapper,
+  # , openssl_1_1
+  requireFile,
+  stdenv,
+  unzip,
+  xorg,
+  zlib,
+  saveName ? "Tim_239568989",
   # configure SMAPI options, see src/SMAPI/SMAPI.config.json in the SMAPI repo
   # for possible values
-, smapiConfig ? {
+  smapiConfig ? {
     ConsoleColors = {
       UseScheme = "DarkBackground";
     };
-  }
+  },
   # override needs to copy entire mod list but that at least allows for some
   # kind of customization vs a let binding
-, modList ? [
+  modList ? [
     rec {
       pname = "AutoLoadGame";
       version = "1.0.2";
@@ -105,23 +106,26 @@
         sha256 = "sha256-hz2vDXacCkXsXyl1RmsN4avSN/yZm2YOPUTP5pHl7sc=";
       };
     }
-  ]
+  ],
 }:
 let
   mkMod =
-    { pname
-    , version
-    , src
-    , url
-    , modConfig ? { }
+    {
+      pname,
+      version,
+      src,
+      url,
+      modConfig ? { },
     }:
-    { stdenv
-    , fetchurl
-    , unzip
-    , jq
-    , lib
-    , writeText
-    }: stdenv.mkDerivation rec {
+    {
+      stdenv,
+      fetchurl,
+      unzip,
+      jq,
+      lib,
+      writeText,
+    }:
+    stdenv.mkDerivation rec {
       inherit pname version src;
       dontPatch = true;
       dontConfigure = true;
@@ -175,7 +179,10 @@ stdenv.mkDerivation rec {
   dontPatch = true;
   dontConfigure = true;
   dontBuild = true;
-  nativeBuildInputs = [ autoPatchelfHook makeWrapper ];
+  nativeBuildInputs = [
+    autoPatchelfHook
+    makeWrapper
+  ];
   buildInputs = [
     fontconfig
     libkrb5
@@ -206,13 +213,15 @@ stdenv.mkDerivation rec {
     ${jq}/bin/jq -s '.[0] * .[1]' <<< "$confOld $confNew" > "$out/smapi-internal/config.json"
     # EXE
     makeWrapper $out/StardewValley $out/bin/stardew-server \
-      --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [
-        alsa-lib
-        icu
-        libGL
-        # openssl_1_1
-        xorg.libXi
-      ]}"
+      --prefix LD_LIBRARY_PATH : "${
+        lib.makeLibraryPath [
+          alsa-lib
+          icu
+          libGL
+          # openssl_1_1
+          xorg.libXi
+        ]
+      }"
     runHook postInstall
   '';
 }

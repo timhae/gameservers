@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   # Set to {id}-{branch}-{password} for betas.
   steam-app = "896660";
@@ -31,7 +36,12 @@ in
         let
           install-mods = pkgs.writeShellApplication {
             name = "install-mods";
-            runtimeInputs = with pkgs; [ curl unzip coreutils rsync ];
+            runtimeInputs = with pkgs; [
+              curl
+              unzip
+              coreutils
+              rsync
+            ];
             text = ''
               mkdir -p ~/mods
               cd ~/mods || exit 1

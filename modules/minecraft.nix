@@ -1,4 +1,12 @@
-{ config, lib, pkgs, inputs, outputs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  outputs,
+  ...
+}:
+{
   services.minecraft-server = {
     enable = true;
     eula = true;
@@ -14,7 +22,8 @@
       "rcon.port" = 25575;
       broadcast-rcon-to-ops = false;
     };
-    whitelist = {
-    };
+    whitelist =
+      {
+      };
   };
 }

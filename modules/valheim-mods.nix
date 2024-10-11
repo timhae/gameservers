@@ -1,4 +1,11 @@
-{ config, lib, pkgs, inputs, outputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  outputs,
+  ...
+}:
 let
   cfg = config.services.valheim-mods;
   format = pkgs.formats.toml { };
@@ -50,8 +57,20 @@ in
         ExecStart =
           let
             mkMod =
-              { pname, version, src, config ? { } }:
-              { stdenv, unzip, ilspycmd, ripgrep, fd }: stdenv.mkDerivation rec {
+              {
+                pname,
+                version,
+                src,
+                config ? { },
+              }:
+              {
+                stdenv,
+                unzip,
+                ilspycmd,
+                ripgrep,
+                fd,
+              }:
+              stdenv.mkDerivation rec {
                 inherit pname version src;
                 dontPatch = true;
                 dontConfigure = true;
@@ -68,8 +87,13 @@ in
                 '';
               };
             modDerivations = map (mod: pkgs.callPackage (mkMod mod) { }) cfg.mods;
-            bepInEx = pkgs.callPackage
-              ({ stdenv, unzip, fd }: stdenv.mkDerivation rec {
+            bepInEx = pkgs.callPackage (
+              {
+                stdenv,
+                unzip,
+                fd,
+              }:
+              stdenv.mkDerivation rec {
                 pname = "BepInExPack_Valheim";
                 version = "5.4.2202";
                 src = pkgs.fetchurl {
@@ -81,6 +105,7 @@ in
                 dontBuild = true;
                 dontInstall = true;
                 dontFixup = true;
+                # TODO: remove no longer active mods
                 unpackPhase = ''
                   mkdir -p $out
                   ${unzip}/bin/unzip $src
@@ -94,14 +119,14 @@ in
                     chmod 777 $out/BepInEx/config/$configName
                   done
                 '';
-              })
-              { };
+              }
+            ) { };
           in
           "${pkgs.writers.writeBashBin "install-valheim-mods" ''
-          ${pkgs.rsync}/bin/rsync -av ${bepInEx.outPath}/* ${cfg.installDir}
-          ${pkgs.coreutils}/bin/chmod -R 777 ${cfg.installDir}/BepInEx/
-          ${pkgs.coreutils}/bin/chmod +x ${cfg.installDir}/start_game_bepinex.sh
-        ''}/bin/install-valheim-mods";
+            ${pkgs.rsync}/bin/rsync -av ${bepInEx.outPath}/* ${cfg.installDir}
+            ${pkgs.coreutils}/bin/chmod -R 777 ${cfg.installDir}/BepInEx/
+            ${pkgs.coreutils}/bin/chmod +x ${cfg.installDir}/start_game_bepinex.sh
+          ''}/bin/install-valheim-mods";
       };
     };
   };

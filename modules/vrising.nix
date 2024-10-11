@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 # TODO: move into gameservers
 with lib;
 
@@ -160,12 +165,8 @@ in
         rm -rf .wine
         mkdir -p $saveDir/Settings
         ${pkgs.jq}/bin/jq --slurpfile pw <(${pkgs.jq}/bin/jq -R . < $CREDENTIALS_DIRECTORY/password ) \
-          '.Password = $pw[0]' ${
-            format.generate "hostSettings.json" cfg.hostSettings
-          } > $saveDir/Settings/ServerHostSettings.json
-        ln -sf ${
-          format.generate "gameSettings.json" cfg.gameSettings
-        } $saveDir/Settings/ServerGameSettings.json
+          '.Password = $pw[0]' ${format.generate "hostSettings.json" cfg.hostSettings} > $saveDir/Settings/ServerHostSettings.json
+        ln -sf ${format.generate "gameSettings.json" cfg.gameSettings} $saveDir/Settings/ServerGameSettings.json
         exec ${pkgs.xvfb-run}/bin/xvfb-run \
           --auto-servernum \
           --server-args='-screen 0 320x180x8' \

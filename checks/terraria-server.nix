@@ -1,4 +1,9 @@
-{ self, nixpkgs, system }: {
+{
+  self,
+  nixpkgs,
+  system,
+}:
+{
   terraria-server =
     with import (nixpkgs + "/nixos/lib/testing-python.nix") { inherit system; };
     makeTest {

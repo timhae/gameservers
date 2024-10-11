@@ -1,14 +1,13 @@
-{ stdenv
-, fetchurl
-, unzip
-, jq
-, lib
-, writeText
-, modConfig ? {
+{
+  stdenv,
+  fetchurl,
+  unzip,
+  jq,
+  modConfig ? {
     serverHotKey = "F10";
     profitmargin = 99;
     clientsCanPause = true;
-  }
+  },
 }:
 stdenv.mkDerivation rec {
   pname = "RemoteControl";

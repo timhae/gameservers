@@ -1,12 +1,13 @@
-{ stdenv
-, lib
-, mono
-, file
-, fetchurl
-, makeWrapper
-, autoPatchelfHook
-, unzip
-, tModLoader ? true
+{
+  stdenv,
+  lib,
+  mono,
+  file,
+  fetchurl,
+  makeWrapper,
+  autoPatchelfHook,
+  unzip,
+  tModLoader ? true,
 }:
 
 stdenv.mkDerivation rec {
@@ -26,7 +27,11 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = [ file ];
-  nativeBuildInputs = [ makeWrapper autoPatchelfHook unzip ];
+  nativeBuildInputs = [
+    makeWrapper
+    autoPatchelfHook
+    unzip
+  ];
 
   installPhase = ''
     runHook preInstall
@@ -40,13 +45,13 @@ stdenv.mkDerivation rec {
     chmod +x "$out/Linux/TerrariaServer.exe"
     # TMOD
     ${lib.optionalString tModLoader ''
-      ${unzip}/bin/unzip tModLoader.zip -d $out/
+            ${unzip}/bin/unzip tModLoader.zip -d $out/
 
-        library_dir="$root_dir/Libraries/Native/Linux"
-        export LD_LIBRARY_PATH="$library_dir"
-        ln -sf "$library_dir/libSDL2-2.0.so.0" "$library_dir/libSDL2.so"
+              library_dir="$root_dir/Libraries/Native/Linux"
+              export LD_LIBRARY_PATH="$library_dir"
+              ln -sf "$library_dir/libSDL2-2.0.so.0" "$library_dir/libSDL2.so"
 
-install dotnet
+      install dotnet
     ''}
     makeWrapper ${mono}/bin/mono $out/bin/terraria-server \
       --add-flags "--server --gc=sgen -O=all '$out/Linux/TerrariaServer.exe'"
