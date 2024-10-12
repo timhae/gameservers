@@ -1,11 +1,10 @@
 {
   config,
-  pkgs,
   lib,
+  pkgs,
   ...
 }:
 let
-  # Set to {id}-{branch}-{password} for betas.
   steam-app = "896660";
   cfg = config.services.valheim;
 in

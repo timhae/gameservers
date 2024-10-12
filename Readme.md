@@ -64,10 +64,24 @@ an active choice. `./modules/valheim-server.nix` defines all available settings.
 
 ## Satisfactory
 
+Basic setup:
 
+```nix
+services.satisfactory = {
+  enable = true;
+  openFirewall = true;
+};
+```
+
+The systemd unit is not started automatically since the service puts some load
+on the host machine and thus enabling with `systemctl start satisfactory` should
+be an active choice. `./modules/satisfactory-server.nix` defines all available
+settings. Make sure to claim the server through the server manager in the
+starting screen of the game after you start the service.
 
 # TODO
 
 - [ ] create checks
 - [ ] run ci
 - [ ] auto-update flake input
+- [ ] package server files with depot downloader

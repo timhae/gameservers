@@ -40,6 +40,7 @@
         stardew-server = import ./modules/stardew-server.nix;
         terraria-server = import ./modules/terraria-server.nix;
         valheim-server = import ./modules/valheim-server.nix;
+        satisfactory-server = import ./modules/satisfactory-server.nix;
       };
       homeManagerModules = {
         valheim-mods = import ./modules/valheim-mods.nix;
