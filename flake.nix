@@ -28,7 +28,7 @@
     in
     {
       overlays.default = final: _: {
-        mage-server = final.callPackage ./pkgs/mage-server.nix { };
+        #mage-server = final.callPackage ./pkgs/mage-server.nix { };
         stardew-server = final.callPackage ./pkgs/stardew-server.nix { };
         terraria-server = final.callPackage ./pkgs/terraria-server.nix { };
         test-mod = final.callPackage ./pkgs/test-mod.nix { };
@@ -36,7 +36,7 @@
       };
       packages = forEachPkgs (pkgs: (self.overlays.default pkgs pkgs));
       nixosModules = {
-        mage-server = import ./modules/mage-server.nix;
+        #mage-server = import ./modules/mage-server.nix;
         stardew-server = import ./modules/stardew-server.nix;
         terraria-server = import ./modules/terraria-server.nix;
         valheim-server = import ./modules/valheim-server.nix;
