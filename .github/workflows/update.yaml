@@ -1,0 +1,19 @@
+name: "update"
+on:
+  workflow_dispatch: # allows manual triggering
+  schedule:
+    - cron: "0 0 * * 0" # runs weekly on Sunday at 00:00
+jobs:
+  flake-lock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: cachix/install-nix-action@v30
+      - run: nix flake update
+      - uses: peter-evans/create-pull-request@v7.0.5
+        with:
+          commit-message: "chore(deps): update flake lock"
+          title: "chore(deps): update flake lock"
+          branch: flake-updates
+          delete-branch: true
+          token: ${{ secrets.NIXCONFIG_UPDATE_ACTION_PR }}
