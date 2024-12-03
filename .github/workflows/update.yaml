@@ -1,16 +1,19 @@
 name: "update"
 on:
-  workflow_dispatch: # allows manual triggering
+  workflow_dispatch:
   schedule:
     - cron: "0 0 * * 0" # runs weekly on Sunday at 00:00
+permissions:
+  contents: write
+  pull-requests: write
 jobs:
   flake-lock:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v4
       - uses: cachix/install-nix-action@v30
       - run: nix flake update
-      - uses: peter-evans/create-pull-request@v7.0.5
+      - uses: peter-evans/create-pull-request@v7
         with:
           commit-message: "chore(deps): update flake lock"
           title: "chore(deps): update flake lock"
