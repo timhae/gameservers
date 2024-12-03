@@ -19,4 +19,3 @@ jobs:
           title: "chore(deps): update flake lock"
           branch: flake-updates
           delete-branch: true
-          token: ${{ secrets.NIXCONFIG_UPDATE_ACTION_PR }}
