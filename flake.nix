@@ -41,6 +41,7 @@
         terraria-server = import ./modules/terraria-server.nix;
         valheim-server = import ./modules/valheim-server.nix;
         satisfactory-server = import ./modules/satisfactory-server.nix;
+        vrising-server = import ./modules/vrising-server.nix;
       };
       homeManagerModules = {
         valheim-mods = import ./modules/valheim-mods.nix;

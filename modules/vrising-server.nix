@@ -4,7 +4,6 @@
   pkgs,
   ...
 }:
-# TODO: move into gameservers
 with lib;
 
 let
@@ -122,7 +121,7 @@ in
 
     systemd.services.vrising-server = {
       description = "V Rising dedicated server";
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = [ "network-online.target" ];
       after = [ "network-online.target" ];
 
       environment = {
@@ -134,6 +133,7 @@ in
       serviceConfig = {
         ExecStartPre = ''
           ${pkgs.steamcmd}/bin/steamcmd \
+            +@sSteamCmdForcePlatformType windows \
             +force_install_dir ${varLibStateDir} \
             +login anonymous \
             +app_update 1829350 \
@@ -145,6 +145,7 @@ in
         Restart = "no";
         StateDirectory = cfg.stateDir;
         DynamicUser = true;
+        TimeoutStartSec = 3600;
         # in case execstop does not kill all winedevice processes
         TimeoutStopSec = 10;
         LoadCredential = "password:${cfg.passwordFile}";
