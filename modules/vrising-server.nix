@@ -121,7 +121,7 @@ in
 
     systemd.services.vrising-server = {
       description = "V Rising dedicated server";
-      wantedBy = [ "network-online.target" ];
+      wants = [ "network-online.target" ];
       after = [ "network-online.target" ];
 
       environment = {
