@@ -115,6 +115,17 @@ in
       will be ignored. Use the dedicated passwordFile option instead.
     '';
 
+    users.users.vrising = {
+      isSystemUser = true;
+      # vrising puts save data in the home directory.
+      home = varLibStateDir;
+      createHome = true;
+      homeMode = "750";
+      group = "vrising";
+    };
+
+    users.groups.vrising = { };
+
     networking.firewall.allowedUDPPorts = mkIf cfg.openFirewall [
       cfg.hostSettings.port
       cfg.hostSettings.queryPort
@@ -137,7 +148,8 @@ in
         WorkingDirectory = varLibStateDir;
         Restart = "no";
         StateDirectory = cfg.stateDir;
-        DynamicUser = true;
+        User = "vrising";
+        Group = "vrising";
         TimeoutStartSec = 3600;
         # in case execstop does not kill all winedevice processes
         TimeoutStopSec = 10;
