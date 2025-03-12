@@ -10,6 +10,7 @@ let
   cfg = config.services.vrising-server;
   varLibStateDir = "/var/lib/${cfg.stateDir}";
   format = pkgs.formats.json { };
+  steam-app = "1829350";
 in
 {
   options = {
@@ -121,8 +122,8 @@ in
 
     systemd.services.vrising-server = {
       description = "V Rising dedicated server";
-      wants = [ "network-online.target" ];
-      after = [ "network-online.target" ];
+      wants = [ "steam@${steam-app}_true.service" ];
+      after = [ "steam@${steam-app}_true.service" ];
 
       environment = {
         # steamcmd uses $HOME/.local for temporary files
@@ -131,14 +132,6 @@ in
       };
 
       serviceConfig = {
-        ExecStartPre = ''
-          ${pkgs.steamcmd}/bin/steamcmd \
-            +@sSteamCmdForcePlatformType windows \
-            +force_install_dir ${varLibStateDir} \
-            +login anonymous \
-            +app_update 1829350 \
-            +quit
-        '';
         # sometimes winedevice processes are left running https://github.com/lutris/lutris/issues/4046
         ExecStop = "${pkgs.wine64}/bin/wineserver -k";
         WorkingDirectory = varLibStateDir;
@@ -171,7 +164,7 @@ in
         exec ${pkgs.xvfb-run}/bin/xvfb-run \
           --auto-servernum \
           --server-args='-screen 0 320x180x8' \
-          ${pkgs.wine64}/bin/wine64 VRisingServer.exe \
+          ${pkgs.wine64}/bin/wine64 /var/lib/steam-app-${steam-app}/VRisingServer.exe \
           -persistentDataPath $saveDir \
           -logFile server.log
       '';

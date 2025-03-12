@@ -36,23 +36,22 @@
             instance=''${1:?Instance Missing}
             eval 'args=(''${(@s:_:)instance})'
             app=''${args[1]:?App ID missing}
-            beta=''${args[2]:-}
-            betapass=''${args[3]:-}
+            windows=''${args[2]:-}
 
             dir=/var/lib/steam-app-$instance
 
             cmds=(
               +force_install_dir $dir
+            )
+
+            if [[ $windows ]]; then
+              cmds+=(+@sSteamCmdForcePlatformType windows)
+            fi
+
+            cmds+=(
               +login anonymous
               +app_update $app validate
             )
-
-            if [[ $beta ]]; then
-              cmds+=(-beta $beta)
-              if [[ $betapass ]]; then
-                cmds+=(-betapassword $betapass)
-              fi
-            fi
 
             cmds+=(+quit)
 
