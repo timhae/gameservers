@@ -2,7 +2,7 @@ name: "update"
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * 0" # runs weekly on Sunday at 00:00
+    - cron: "0 0 * * 6" # runs weekly on Saturday at 00:00
 permissions:
   contents: write
   pull-requests: write
