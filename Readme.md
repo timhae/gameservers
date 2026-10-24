@@ -41,6 +41,31 @@ services.stardew-server = {
 That's it. After a rebuild you can join the game via the IP of your server.
 `./modules/stardew-server.nix` defines all available settings.
 
+The game files are a fixed-output derivation that uses DepotDownloader to
+fetch the Linux depot of Stardew Valley 1.5.6. Steam does not serve paid apps
+to anonymous accounts, so fetching them needs credentials of an account that
+owns the game.
+
+The local workflow is to prefetch the files with:
+
+```sh
+nix run .#prefetch-stardew-valley
+```
+
+It asks for your Steam username; DepotDownloader then prompts for the password
+and Steam Guard. The credentials are only used by that DepotDownloader process
+and never reach Nix. The script adds the downloaded files to the Nix store and
+prints the recursive hash. Replace `hash = lib.fakeHash;` in the `src`
+derivation in `./pkgs/stardew-server.nix` with the printed hash, then build
+normally:
+
+```sh
+nix build .#stardew-server
+```
+
+The fixed-output derivation can also fetch the depot by itself for unattended
+builds. It reads `STEAM_USERNAME`, `STEAM_PASSWORD` and `STEAM_GUARD_CODE`.
+
 ## Valheim
 
 Basic setup:
@@ -84,4 +109,6 @@ starting screen of the game after you start the service.
 - [ ] create checks
 - [ ] run ci
 - [ ] auto-update flake input
-- [ ] package server files with depot downloader
+- [x] package Stardew Valley server files with depot downloader
+- [x] pin Stardew Valley depot hash
+- [ ] package remaining server files with depot downloader

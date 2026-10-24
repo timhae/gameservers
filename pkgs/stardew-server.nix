@@ -14,7 +14,6 @@
   lttng-ust_2_12,
   makeWrapper,
   # , openssl_1_1
-  requireFile,
   stdenv,
   unzip,
   xorg,
@@ -109,6 +108,8 @@
   ],
 }:
 let
+  depot = import ./stardew-valley-depot.nix;
+
   mkMod =
     {
       pname,
@@ -155,21 +156,21 @@ stdenv.mkDerivation rec {
   pname = "stardew-server";
   # get version from here https://steamdb.info/app/413150/depots/?branch=public
   # or from steam (right click Stardew Valley, properties -> updates)
-  version = "8043676";
-  src = requireFile {
-    name = "StardewValley";
-    url = "https://store.steampowered.com/app/413150/Stardew_Valley/";
-    sha256 = "1w2ylpp2zkzabllhkh088zalir7w88gdxsf5ajjaajszb31qqars";
-    hashMode = "recursive";
-    message = ''
-      cd ~/.local/share/Steam/steamapps/common
-      mv Stardew\ Valley StardewValley
-      nix-store --add-fixed --recursive sha256 ./StardewValley
-        /nix/store/rs510jnv420lx0fgn503chsxrwn9c1v5-StardewValley
-      mv StardewValley Stardew\ Valley
-      echo $(nix-store -q --hash /nix/store/rs510jnv420lx0fgn503chsxrwn9c1v5-StardewValley)
-        sha256:1w2ylpp2zkzabllhkh088zalir7w88gdxsf5ajjaajszb31qqars
-    '';
+  version = depot.version;
+  src = callPackage ./fetch-steam-depot.nix { } {
+    inherit (depot)
+      pname
+      appId
+      depotId
+      manifestId
+      branch
+      ;
+    version = depot.version;
+    # Prefetch with `nix run .#prefetch-stardew-valley` and pin the hash it
+    # prints. The fixed-output derivation can otherwise download the depot
+    # itself when STEAM_USERNAME/STEAM_PASSWORD/GUARD_CODE are available to
+    # the builder.
+    hash = "sha256-FaEFb8OAa1CxywfLXwqZq8rURFXuiieVXfyq/HgbCBo=";
   };
   smapi-version = "3.18.2";
   src-smapi = fetchzip {

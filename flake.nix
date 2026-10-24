@@ -29,6 +29,7 @@
     {
       overlays.default = final: _: {
         #mage-server = final.callPackage ./pkgs/mage-server.nix { };
+        prefetch-stardew-valley = final.callPackage ./pkgs/prefetch-stardew-valley.nix { };
         stardew-server = final.callPackage ./pkgs/stardew-server.nix { };
         terraria-server = final.callPackage ./pkgs/terraria-server.nix { };
         test-mod = final.callPackage ./pkgs/test-mod.nix { };

@@ -1,0 +1,19 @@
+diff --git a/DepotDownloader/Steam3Session.cs b/DepotDownloader/Steam3Session.cs
+--- a/DepotDownloader/Steam3Session.cs
++++ b/DepotDownloader/Steam3Session.cs
+@@ -430,6 +430,15 @@ namespace DepotDownloader
+             }
+             else
+             {
++                // A reconnect while an authentication session is still waiting for
++                // Steam Guard input invokes this callback a second time. Polling the
++                // same session twice consumes it, and the losing poll fails with
++                // EResult.FileNotFound, aborting an otherwise successful login.
++                if (authSession != null)
++                {
++                    return;
++                }
++
+                 if (logonDetails.Username != null)
+                 {
+                     Console.WriteLine("Logging '{0}' into Steam3...", logonDetails.Username);
